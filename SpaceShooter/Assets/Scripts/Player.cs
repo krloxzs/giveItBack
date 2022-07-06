@@ -14,12 +14,21 @@ public class Player : MonoBehaviour
     [SerializeField]
     private float _fireRate = 0.2f;
 
+    [SerializeField]
+    private int _lives = 3;
+
+    private SpawnManager _spawnManager;
     private float _nextFire = 0.0f;
     // Start is called before the first frame update
     void Start()
     {
         // take the current position = new position to (0,0,0)
         transform.position = new Vector3(0, 0, 0);
+        _spawnManager = GameObject.Find("Spawn_Manager").GetComponent<SpawnManager>();
+        if (_spawnManager == null)
+        {
+            Debug.LogError("_spawnManager in null");
+        }
     }
 
     // Update is called once per frame
@@ -52,6 +61,19 @@ public class Player : MonoBehaviour
         else if (transform.position.x <= -11.3)
         {
             transform.position = new Vector3(11.3f, transform.position.y, 0);
+        }
+    }
+
+    public void Damage()
+    {
+        _lives -= 1;
+        if (_lives < 1)
+        {
+            if (_spawnManager != null)
+            {
+                _spawnManager.OnPlayerDead();
+            }
+            Destroy(this.gameObject);
         }
     }
 }
